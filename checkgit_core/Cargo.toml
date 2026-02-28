@@ -7,3 +7,5 @@ edition = "2024"
 reqwest = {version = "*",features = ["json"]}
 tokio ={version = "*",features = ["full"]}
 serde ={ version = "*",features = ["derive"]}
+image ="0.25.9"
+serde_json ="1"
