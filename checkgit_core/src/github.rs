@@ -2,6 +2,7 @@ use reqwest::{Client, StatusCode};
 use serde::Deserialize;
 
 use crate::{error::CheckGitError, models::GraphQLResponse};
+use image::{DynamicImage, imageops::FilterType};
 
 #[derive(Debug, Deserialize)]
 pub struct GithubUserResponse {
@@ -28,7 +29,6 @@ pub struct GithubClient {
 impl GithubClient {
     pub fn new(token: Option<String>) -> Result<Self, CheckGitError> {
         let client = Client::builder().user_agent("checkgit").build()?;
-
         Ok(Self { client, token })
     }
 
@@ -74,14 +74,19 @@ impl GithubClient {
     pub async fn fetch_avatar_image(
         &self,
         avatar_url: &str,
-    ) -> Result<image::DynamicImage, CheckGitError> {
-        let response = self.client.get(avatar_url).send().await?;
+    ) -> Result<DynamicImage, CheckGitError> {
+        let hi_res_url = if avatar_url.contains('?') {
+            format!("{}&s=460", avatar_url)
+        } else {
+            format!("{}?s=460", avatar_url)
+        };
+
+        let response = self.client.get(&hi_res_url).send().await?;
         let bytes = response.bytes().await?;
 
         let img = image::load_from_memory(&bytes)
             .map_err(|e| CheckGitError::ImageError(e.to_string()))?;
 
-        // Center square crop
         let size = img.width().min(img.height());
         let cropped = img.crop_imm(
             (img.width() - size) / 2,
@@ -90,8 +95,13 @@ impl GithubClient {
             size,
         );
 
-        Ok(cropped)
+        let resized = cropped.resize(460, 460, FilterType::Lanczos3);
+
+        let sharpened = resized.unsharpen(0.8, 2);
+
+        Ok(sharpened)
     }
+
     pub async fn fetch_contributions(
         &self,
         username: &str,
@@ -128,15 +138,10 @@ impl GithubClient {
             .await?;
 
         let response = self.handle_status(response).await?;
-
         let text = response.text().await?;
 
         let parsed: GraphQLResponse =
             serde_json::from_str(&text).map_err(|_| CheckGitError::InvalidResponse)?;
-
-        if parsed.errors.is_some() || parsed.data.is_none() {
-            return Err(CheckGitError::InvalidResponse);
-        }
 
         let weeks = parsed
             .data
