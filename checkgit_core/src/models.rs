@@ -3,7 +3,6 @@ use serde::Deserialize;
 #[derive(Debug, Deserialize)]
 pub struct GraphQLResponse {
     pub data: Option<GraphQLUser>,
-    pub errors: Option<Vec<GraphQLError>>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -38,9 +37,4 @@ pub struct Week {
 #[serde(rename_all = "camelCase")]
 pub struct ContributionDay {
     pub contribution_count: u32,
-}
-
-#[derive(Debug, Deserialize)]
-pub struct GraphQLError {
-    pub message: String,
 }
