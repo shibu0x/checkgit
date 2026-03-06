@@ -277,9 +277,19 @@ pub fn render_heatmap(matrix: &[Vec<u32>]) {
         }
     }
 
+    let today = UTC::now().weekday().number_from_sunday() - 1;
+
+    let todays_commits = matrix
+        .get(today as usize)
+        .and_then(|r| r.get(weeks.saturating_sub(1)))
+        .copied()
+        .unwrap_or(0);
+
     println!();
     println!(
-        "{} {}   {} {}",
+        "{} {}   {} {}   {} {}",
+        "Today's commits:".truecolor(125, 133, 144),
+        todays_commits.to_string().bold(),
         "Current streak:".truecolor(125, 133, 144),
         current.to_string().bold(),
         "Longest streak:".truecolor(125, 133, 144),
