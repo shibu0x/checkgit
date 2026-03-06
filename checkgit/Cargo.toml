@@ -2,6 +2,12 @@
 name = "checkgit"
 version = "0.1.0"
 edition = "2024"
+description = "Explore GitHub profiles and stats from your terminal"
+license = "MIT"
+repository = "https://github.com/shibu0x/checkgit"
+readme = "../README.md"
+keywords = ["github", "cli", "terminal"]
+categories = ["command-line-utilities"]
 
 [dependencies]
 checkgit_core = { path = "../checkgit_core" }

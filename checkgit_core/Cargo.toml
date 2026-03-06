@@ -2,6 +2,16 @@
 name = "checkgit_core"
 version = "0.1.0"
 edition = "2024"
+description = "Core library powering the checkgit CLI for fetching GitHub profiles, repositories and contribution stats"
+license = "MIT"
+repository = "https://github.com/shibu0x/checkgit"
+readme = "../README.md"
+keywords = ["github", "cli", "git", "stats"]
+categories = ["command-line-utilities"]
+
+[lib]
+name = "checkgit_core"
+path = "src/lib.rs"
 
 [dependencies]
 reqwest = { version = "0.11", features = ["json"] }
