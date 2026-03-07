@@ -7,13 +7,16 @@ pub fn render(profile: &checkgit_core::UserProfile) {
     clear_screen();
 
     let avatar_width: u32 = 35;
+    let term = std::env::var("TERM_PROGRAM").unwrap_or_default();
+    let is_kitty = matches!(term.as_str(), "kitty" | "ghostty" | "WezTerm");
+    let is_iterm = term == "iTerm.app";
 
     print(
         &profile.avatar_image,
         &Config {
             width: Some(avatar_width),
-            use_kitty: true,
-            use_iterm: true,
+            use_kitty: is_kitty,
+            use_iterm: is_iterm,
             absolute_offset: false,
             ..Default::default()
         },
