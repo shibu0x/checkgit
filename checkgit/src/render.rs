@@ -1,5 +1,5 @@
 use crate::helper::{clear_screen, move_cursor_right, move_cursor_up};
-use chrono::{Datelike, Duration, UTC};
+use chrono::{Datelike, Duration, Utc};
 use colored::Colorize;
 use viuer::{Config, print};
 
@@ -186,7 +186,7 @@ pub fn render_heatmap(matrix: &[Vec<u32>]) {
         }
     }
 
-    let start = UTC::now() - Duration::weeks(52);
+    let start = Utc::now() - Duration::weeks(52);
 
     print!("     ");
 
@@ -280,7 +280,7 @@ pub fn render_heatmap(matrix: &[Vec<u32>]) {
         }
     }
 
-    let today = UTC::now().weekday().number_from_sunday() - 1;
+    let today = Utc::now().weekday().number_from_sunday() - 1;
 
     let todays_commits = matrix
         .get(today as usize)
